@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import PrediccionMateria
 
 
@@ -9,25 +10,31 @@ class PrediccionMateriaAdmin(admin.ModelAdmin):
         'materia',
         'parcial_1',
         'parcial_2',
-        'calificacion_tercer_parcial_estimada',
+        'calificacion_media_tercer_parcial',
+        'calificacion_final_media',
         'riesgo_academico',
         'fecha_prediccion',
-    )
-
-    search_fields = (
-        'alumno__alumno_id',
-        'alumno__nombre',
-        'alumno__apellidos',
-        'materia__nombre_materia',
     )
 
     list_filter = (
         'riesgo_academico',
-        'materia__grado',
-        'materia__area_materia',
+        'materia',
         'fecha_prediccion',
     )
 
+    search_fields = (
+        'alumno__nombre',
+        'alumno__apellido_paterno',
+        'materia__nombre',
+    )
+
     readonly_fields = (
+        'calificacion_minima_tercer_parcial',
+        'calificacion_media_tercer_parcial',
+        'calificacion_maxima_tercer_parcial',
+        'calificacion_final_minima',
+        'calificacion_final_media',
+        'calificacion_final_maxima',
+        'riesgo_academico',
         'fecha_prediccion',
     )
