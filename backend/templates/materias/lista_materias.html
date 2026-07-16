@@ -1,0 +1,59 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Materias | EduPredict{% endblock %}
+
+{% block content %}
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Materias registradas</h2>
+                <p class="text-muted mb-0">
+                    Lista de materias disponibles por grado escolar.
+                </p>
+            </div>
+
+            <a href="/admin/materias/materia/add/" class="btn btn-primary">
+                <i class="bi bi-journal-plus"></i>
+                Agregar materia
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Materia</th>
+                        <th>Área</th>
+                        <th>Grado</th>
+                        <th>Dificultad</th>
+                        <th>Horas/semana</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for materia in materias %}
+                        <tr>
+                            <td>{{ materia.nombre_materia }}</td>
+                            <td>{{ materia.area_materia }}</td>
+                            <td>{{ materia.get_grado_display }}</td>
+                            <td>{{ materia.dificultad_materia }}</td>
+                            <td>{{ materia.horas_clase_semana }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-muted">
+                                Todavía no hay materias registradas.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

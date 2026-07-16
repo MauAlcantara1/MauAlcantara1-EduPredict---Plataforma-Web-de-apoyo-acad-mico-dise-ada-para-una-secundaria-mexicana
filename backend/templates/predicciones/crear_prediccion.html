@@ -1,0 +1,205 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Nueva predicción | EduPredict{% endblock %}
+
+{% block content %}
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+
+        <div class="mb-4">
+            <h2 class="fw-bold mb-1">Nueva predicción académica</h2>
+            <p class="text-muted mb-0">
+                Captura los datos académicos del alumno para registrar una predicción por materia.
+            </p>
+            <p class="text-muted mb-0">
+                Si el campo a introducir es mayor al limite, colocar el limite maximo
+            </p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <h5 class="fw-bold mb-3">Datos generales</h5>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+                    <label class="form-label">Alumno</label>
+                    {{ form.alumno }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Materia</label>
+                    {{ form.materia }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Horas de clase por semana</label>
+                    {{ form.horas_clase_semana }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Promedio general anterior</label>
+                    {{ form.promedio_general_anterior }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Materias reprobadas previas</label>
+                    {{ form.materias_reprobadas_previas }}
+                </div>
+
+            </div>
+
+            <h5 class="fw-bold mb-3">Desempeño académico</h5>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-4">
+                    <label class="form-label">Promedio anterior en la materia</label>
+                    {{ form.promedio_materia_anterior }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Parcial 1</label>
+                    {{ form.parcial_1 }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Parcial 2</label>
+                    {{ form.parcial_2 }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Promedio de tareas</label>
+                    {{ form.promedio_tareas }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Porcentaje de tareas entregadas</label>
+                    {{ form.porcentaje_tareas_entregadas }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Participación</label>
+                    {{ form.participacion }}
+                </div>
+
+            </div>
+
+            <h5 class="fw-bold mb-3">Asistencia y conducta</h5>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-3">
+                    <label class="form-label">Conducta</label>
+                    {{ form.conducta }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Faltas</label>
+                    {{ form.faltas_materia }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Retardos</label>
+                    {{ form.retardos_materia }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Asistencia (%)</label>
+                    {{ form.asistencia_porcentaje }}
+                </div>
+
+            </div>
+
+            <h5 class="fw-bold mb-3">Contexto del alumno</h5>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-4">
+                    <label class="form-label">Horas de estudio por semana</label>
+                    {{ form.horas_estudio_semana_materia }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Apoyo familiar</label>
+                    {{ form.apoyo_familiar_nivel }}
+                    <div class="form-text">1 = bajo, 2 = medio, 3 = alto</div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Horas de trabajo por semana</label>
+                    {{ form.horas_trabajo_semana }}
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-check mt-4">
+                        {{ form.acceso_internet }}
+                        <label class="form-check-label">
+                            Tiene acceso a internet
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-check mt-4">
+                        {{ form.trabaja }}
+                        <label class="form-check-label">
+                            Trabaja
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save-fill"></i>
+                    Guardar predicción
+                </button>
+
+                <a href="{% url 'lista_predicciones' %}" class="btn btn-outline-secondary">
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<script>
+    const alumnoSelect = document.getElementById('id_alumno');
+    const materiaSelect = document.getElementById('id_materia');
+
+    alumnoSelect.addEventListener('change', function () {
+        const alumnoId = this.value;
+
+        materiaSelect.innerHTML = '<option value="">Cargando materias...</option>';
+
+        if (!alumnoId) {
+            materiaSelect.innerHTML = '<option value="">Selecciona primero un alumno</option>';
+            return;
+        }
+
+        fetch(`/materias/por-alumno/${alumnoId}/`)
+            .then(response => response.json())
+            .then(data => {
+                materiaSelect.innerHTML = '<option value="">Selecciona una materia</option>';
+
+                data.materias.forEach(materia => {
+                    const option = document.createElement('option');
+                    option.value = materia.id;
+                    option.textContent = materia.nombre;
+                    materiaSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar materias:', error);
+                materiaSelect.innerHTML = '<option value="">Error al cargar materias</option>';
+            });
+    });
+</script>
+
+{% endblock %}

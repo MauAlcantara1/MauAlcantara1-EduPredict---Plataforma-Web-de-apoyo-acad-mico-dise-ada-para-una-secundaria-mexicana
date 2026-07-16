@@ -3,11 +3,12 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+.Python
 
 # Entornos virtuales
 venv/
-env/
-.venv/
+.env
+.env.*
 
 # Django
 *.log
@@ -15,8 +16,8 @@ local_settings.py
 db.sqlite3
 media/
 
-# Variables de entorno
-.env
+# Static compilado, si luego lo usas
+staticfiles/
 
 # Jupyter
 .ipynb_checkpoints/
@@ -28,3 +29,11 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Archivos temporales
+*.tmp
+*.bak
+
+# Modelos ML pesados opcionalmente
+*.joblib
+*.pkl

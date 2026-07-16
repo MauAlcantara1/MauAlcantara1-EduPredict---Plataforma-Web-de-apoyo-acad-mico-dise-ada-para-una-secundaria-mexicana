@@ -1,0 +1,80 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Registrar alumno | EduPredict{% endblock %}
+
+{% block content %}
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+
+        <div class="mb-4">
+            <h2 class="fw-bold mb-1">Registrar alumno</h2>
+            <p class="text-muted mb-0">
+                Captura los datos generales del estudiante.
+            </p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <label class="form-label">ID del alumno</label>
+                    {{ form.alumno_id }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Nombre</label>
+                    {{ form.nombre }}
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Apellidos</label>
+                    {{ form.apellidos }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Grado</label>
+                    {{ form.grado }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Grupo</label>
+                    {{ form.grupo }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Turno</label>
+                    {{ form.turno }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Edad</label>
+                    {{ form.edad }}
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Sexo</label>
+                    {{ form.sexo }}
+                </div>
+
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save-fill"></i>
+                    Guardar alumno
+                </button>
+
+                <a href="{% url 'lista_alumnos' %}" class="btn btn-outline-secondary">
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

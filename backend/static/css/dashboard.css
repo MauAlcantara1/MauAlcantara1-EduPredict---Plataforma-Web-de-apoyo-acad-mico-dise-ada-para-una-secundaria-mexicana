@@ -1,0 +1,372 @@
+/* =========================================================
+   EduPredict — Design system
+   Paleta tipo "libreta de calificaciones": tinta + papel + ámbar
+   ========================================================= */
+
+:root {
+    --ep-ink: #1B2A4A;
+    --ep-ink-soft: #24365C;
+    --ep-paper: #F7F3E8;
+    --ep-paper-line: #E4DCC8;
+    --ep-amber: #C98A2C;
+    --ep-red: #B23A2E;
+    --ep-green: #3F6B54;
+    --ep-slate: #6E7688;
+    --ep-navbar-h: 64px;
+    --ep-sidebar-w: 280px;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background: var(--ep-paper) !important;
+    font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+    color: var(--ep-ink);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- Navbar: ledger header bar, always visible so the sidebar has something to attach to --- */
+.navbar.bg-primary {
+    background: var(--ep-ink) !important;
+    border-bottom: 3px solid var(--ep-amber);
+    height: var(--ep-navbar-h);
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+.navbar-brand {
+    font-family: 'Lora', Georgia, serif;
+    letter-spacing: 0.01em;
+    font-size: 1.15rem;
+}
+
+.navbar .fw-semibold {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #D9C9A3;
+    font-weight: 500 !important;
+}
+
+.navbar .btn-light {
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+/* --- App shell --- */
+main.container-fluid {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+main.container-fluid > .row {
+    flex: 1 0 auto;
+}
+
+/* --- Sidebar: dark background stretches to match content (touches the footer);
+     the nav itself is the sticky part that stays pinned while scrolling --- */
+#sidebar {
+    padding: 0;
+    margin-bottom: 0; /* was 2rem — that gap was the blank space below the layout */
+}
+
+#sidebar .sidebar-fill {
+    background: var(--ep-ink);
+}
+
+#sidebar .position-sticky {
+    border-radius: 0;
+    border: none;
+    padding: 0.5rem 0.9rem 1.25rem;
+    /* No top padding/margin: the first button sits right against the navbar's edge */
+}
+
+@media (min-width: 768px) {
+    #sidebar .sidebar-fill {
+        height: 100%;
+        border-right: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
+    #sidebar .position-sticky {
+        position: sticky;
+        top: var(--ep-navbar-h);
+        max-height: calc(100vh - var(--ep-navbar-h));
+        overflow-y: auto;
+    }
+
+    /* If a page ever renders without the navbar, the sidebar climbs to the very top
+       and takes over that space instead of leaving it blank. */
+    body:not(:has(.navbar)) #sidebar .position-sticky {
+        top: 0;
+        max-height: 100vh;
+    }
+}
+
+.ep-content {
+    padding: 1.5rem 1.5rem 2rem;
+}
+
+/* --- Sidebar buttons --- */
+.sidebar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    color: #C7D0E8;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    font-size: 0.92rem;
+    padding: 0.65rem 0.85rem;
+    box-shadow: none;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.sidebar-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    transform: translateX(2px);
+}
+
+.sidebar-btn:active {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+#sidebar ul.nav {
+    padding-top: 0.75rem;
+}
+
+.sidebar-icon {
+    font-size: 1.05rem;
+    color: var(--ep-amber);
+    width: 1.3rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Divider between "action" links and the admin escape hatch */
+#sidebar .nav-item:last-child {
+    margin-top: 0.4rem;
+    padding-top: 0.7rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+#sidebar .nav-item:last-child .sidebar-icon {
+    color: #8C97B8;
+}
+
+/* --- Footer: full width, below the sidebar + content row --- */
+.ep-footer {
+    border-top: 1px solid var(--ep-paper-line);
+    padding: 1.1rem 1.5rem 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ep-slate);
+}
+
+.ep-footer a {
+    color: var(--ep-ink-soft);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.ep-footer a:hover {
+    color: var(--ep-amber);
+}
+
+.ep-footer .ep-footer-links {
+    display: flex;
+    gap: 1.1rem;
+}
+
+/* --- inicio.html dashboard: stat cards, module steps, prediction ledger --- */
+.ep-wrap {
+    font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+    color: var(--ep-ink);
+}
+
+.ep-wrap h1, .ep-wrap h2, .ep-wrap h3, .ep-wrap h5 {
+    font-family: 'Lora', Georgia, serif;
+}
+
+.ep-stat {
+    position: relative;
+    background: var(--ep-paper);
+    border: 1px solid var(--ep-paper-line);
+    border-radius: 6px 6px 2px 2px;
+    padding: 1.5rem 1.25rem 1.25rem;
+    height: 100%;
+    box-shadow: 0 1px 0 rgba(27, 42, 74, 0.04);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ep-stat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -12px rgba(27, 42, 74, 0.35);
+}
+
+.ep-stat::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 20px;
+    width: 34px;
+    height: 10px;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--ep-paper-line),
+        var(--ep-paper-line) 3px,
+        transparent 3px,
+        transparent 6px
+    );
+    border-radius: 0 0 3px 3px;
+    opacity: 0.9;
+}
+
+.ep-stat .ep-tag {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ep-slate);
+    display: block;
+    margin-bottom: 0.6rem;
+}
+
+.ep-stat .ep-number {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--ep-ink);
+}
+
+.ep-stat.is-alert .ep-number { color: var(--ep-red); }
+
+.ep-stat .ep-icon {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    font-size: 1.3rem;
+    color: var(--ep-slate);
+    opacity: 0.5;
+}
+
+.ep-stat.is-alert .ep-icon { color: var(--ep-red); opacity: 0.7; }
+
+.ep-panel {
+    background: #fff;
+    border: 1px solid var(--ep-paper-line);
+    border-radius: 8px;
+    padding: 2rem;
+}
+
+.ep-panel h3 {
+    font-weight: 600;
+    border-bottom: 2px solid var(--ep-ink);
+    display: inline-block;
+    padding-bottom: 0.35rem;
+    margin-bottom: 0.75rem;
+}
+
+.ep-step {
+    border-left: 3px solid var(--ep-paper-line);
+    padding: 0.9rem 0 0.9rem 1.1rem;
+    height: 100%;
+}
+
+.ep-step .ep-step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--ep-amber);
+    letter-spacing: 0.08em;
+}
+
+.ep-step h5 {
+    margin: 0.25rem 0 0.4rem;
+    font-size: 1.02rem;
+}
+
+.ep-step p {
+    color: var(--ep-slate);
+    font-size: 0.92rem;
+    margin: 0;
+}
+
+.ep-ledger table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.ep-ledger thead th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ep-slate);
+    border-bottom: 2px solid var(--ep-ink);
+    padding-bottom: 0.6rem;
+    font-weight: 600;
+}
+
+.ep-ledger tbody td {
+    padding: 0.85rem 0.5rem;
+    border-bottom: 1px dashed var(--ep-paper-line);
+    vertical-align: middle;
+}
+
+.ep-ledger tbody tr:hover {
+    background: var(--ep-paper);
+}
+
+.ep-grade {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+}
+
+.ep-empty {
+    color: var(--ep-slate);
+    font-style: italic;
+}
+
+.ep-stamp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 74px;
+    padding: 0.28rem 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    border: 1.5px solid currentColor;
+    transform: rotate(-2deg);
+}
+
+.ep-stamp.alto  { color: var(--ep-red);   background: rgba(178, 58, 46, 0.08); }
+.ep-stamp.medio { color: var(--ep-amber); background: rgba(201, 138, 44, 0.10); }
+.ep-stamp.bajo  { color: var(--ep-green); background: rgba(63, 107, 84, 0.10); }
+.ep-stamp.sin   { color: var(--ep-slate); background: rgba(110, 118, 136, 0.08); transform: none; }

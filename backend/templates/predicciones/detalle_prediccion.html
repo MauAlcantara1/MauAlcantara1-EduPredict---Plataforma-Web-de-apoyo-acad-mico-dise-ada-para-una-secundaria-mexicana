@@ -1,0 +1,204 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Detalle de predicción | EduPredict{% endblock %}
+
+{% block content %}
+
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
+
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Detalle de predicción</h2>
+                <p class="text-muted mb-0">
+                    Resultado académico estimado para el tercer parcial.
+                </p>
+            </div>
+
+            <a href="{% url 'lista_predicciones' %}" class="btn btn-outline-secondary">
+                Volver
+            </a>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded-4 h-100">
+                    <p class="text-muted mb-1">Alumno</p>
+                    <h5 class="fw-bold mb-0">
+                        {{ prediccion.alumno.nombre }} {{ prediccion.alumno.apellidos }}
+                    </h5>
+                    <small class="text-muted">
+                        {{ prediccion.alumno.alumno_id }}
+                    </small>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded-4 h-100">
+                    <p class="text-muted mb-1">Materia</p>
+                    <h5 class="fw-bold mb-0">
+                        {{ prediccion.materia.nombre_materia }}
+                    </h5>
+                    <small class="text-muted">
+                        {{ prediccion.materia.get_grado_display }}
+                    </small>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded-4 h-100">
+                    <p class="text-muted mb-1">Fecha</p>
+                    <h5 class="fw-bold mb-0">
+                        {{ prediccion.fecha_prediccion|date:"d/m/Y H:i" }}
+                    </h5>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3">Resultado</h4>
+
+                <p class="text-muted mb-1">Calificación estimada del tercer parcial</p>
+                <h1 class="fw-bold">
+                    {{ prediccion.calificacion_tercer_parcial_estimada }}
+                </h1>
+
+                <p class="text-muted mb-1 mt-4">Riesgo académico</p>
+
+                {% if prediccion.riesgo_academico == 'ALTO' %}
+                    <span class="badge bg-danger fs-6">Alto</span>
+                {% elif prediccion.riesgo_academico == 'MEDIO' %}
+                    <span class="badge bg-warning text-dark fs-6">Medio</span>
+                {% elif prediccion.riesgo_academico == 'BAJO' %}
+                    <span class="badge bg-success fs-6">Bajo</span>
+                {% else %}
+                    <span class="badge bg-secondary fs-6">Sin riesgo</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3">Parciales previos</h4>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-4">
+                            <p class="text-muted mb-1">Parcial 1</p>
+                            <h3 class="fw-bold mb-0">{{ prediccion.parcial_1 }}</h3>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-4">
+                            <p class="text-muted mb-1">Parcial 2</p>
+                            <h3 class="fw-bold mb-0">{{ prediccion.parcial_2 }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-muted mt-3 mb-0">
+                    La estimación provisional se calcula usando parciales, tareas,
+                    participación, conducta y asistencia.
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+
+        <h4 class="fw-bold mb-3">Datos utilizados</h4>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <tbody>
+                    <tr>
+                        <th>Promedio general anterior</th>
+                        <td>{{ prediccion.promedio_general_anterior }}</td>
+                    </tr>
+                    <tr>
+                        <th>Promedio anterior en la materia</th>
+                        <td>{{ prediccion.promedio_materia_anterior }}</td>
+                    </tr>
+                    <tr>
+                        <th>Promedio de tareas</th>
+                        <td>{{ prediccion.promedio_tareas }}</td>
+                    </tr>
+                    <tr>
+                        <th>Porcentaje de tareas entregadas</th>
+                        <td>{{ prediccion.porcentaje_tareas_entregadas }}%</td>
+                    </tr>
+                    <tr>
+                        <th>Participación</th>
+                        <td>{{ prediccion.participacion }}</td>
+                    </tr>
+                    <tr>
+                        <th>Conducta</th>
+                        <td>{{ prediccion.conducta }}</td>
+                    </tr>
+                    <tr>
+                        <th>Faltas</th>
+                        <td>{{ prediccion.faltas_materia }}</td>
+                    </tr>
+                    <tr>
+                        <th>Retardos</th>
+                        <td>{{ prediccion.retardos_materia }}</td>
+                    </tr>
+                    <tr>
+                        <th>Asistencia</th>
+                        <td>{{ prediccion.asistencia_porcentaje }}%</td>
+                    </tr>
+                    <tr>
+                        <th>Horas de estudio por semana</th>
+                        <td>{{ prediccion.horas_estudio_semana_materia }}</td>
+                    </tr>
+                    <tr>
+                        <th>Apoyo familiar</th>
+                        <td>{{ prediccion.apoyo_familiar_nivel }}</td>
+                    </tr>
+                    <tr>
+                        <th>Acceso a internet</th>
+                        <td>
+                            {% if prediccion.acceso_internet %}
+                                Sí
+                            {% else %}
+                                No
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Trabaja</th>
+                        <td>
+                            {% if prediccion.trabaja %}
+                                Sí
+                            {% else %}
+                                No
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Horas de trabajo por semana</th>
+                        <td>{{ prediccion.horas_trabajo_semana }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
