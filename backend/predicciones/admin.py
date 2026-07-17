@@ -37,4 +37,5 @@ class PrediccionMateriaAdmin(admin.ModelAdmin):
         'calificacion_final_maxima',
         'riesgo_academico',
         'fecha_prediccion',
+        'margen_error_modelo',
     )

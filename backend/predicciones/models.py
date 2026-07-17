@@ -6,7 +6,7 @@ from materias.models import Materia
 
 
 class PrediccionMateria(models.Model):
-    MARGEN_ERROR_MODELO = 0.7
+    MARGEN_ERROR_MODELO = 0.6
 
     RIESGO_CHOICES = [
         ('BAJO', 'Bajo'),
@@ -25,6 +25,8 @@ class PrediccionMateria(models.Model):
         on_delete=models.CASCADE,
         related_name='predicciones'
     )
+
+    
 
     # Variables del Modelo 3
     horas_clase_semana = models.PositiveSmallIntegerField(
@@ -98,6 +100,15 @@ class PrediccionMateria(models.Model):
     # Resultado generado por el modelo
 
     # Resultados del tercer parcial
+
+    margen_error_modelo = models.FloatField(
+        blank=True,
+        null=True,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(10)
+        ]
+    )
     calificacion_minima_tercer_parcial = models.FloatField(
         blank=True,
         null=True,
@@ -152,6 +163,35 @@ class PrediccionMateria(models.Model):
         verbose_name_plural = 'Predicciones por materia'
         ordering = ['-fecha_prediccion']
 
+    def obtener_datos_modelo(self):
+        """
+        Devuelve las 18 variables académicas con los nombres
+        y tipos esperados por el modelo de Machine Learning.
+        """
+
+        return {
+            "horas_clase_semana": self.horas_clase_semana,
+            "promedio_general_anterior": self.promedio_general_anterior,
+            "materias_reprobadas_previas": self.materias_reprobadas_previas,
+            "promedio_materia_anterior": self.promedio_materia_anterior,
+            "parcial_1": self.parcial_1,
+            "parcial_2": self.parcial_2,
+            "promedio_tareas": self.promedio_tareas,
+            "porcentaje_tareas_entregadas": self.porcentaje_tareas_entregadas,
+            "participacion": self.participacion,
+            "conducta": self.conducta,
+            "faltas_materia": self.faltas_materia,
+            "retardos_materia": self.retardos_materia,
+            "asistencia_porcentaje": self.asistencia_porcentaje,
+            "horas_estudio_semana_materia": (
+                self.horas_estudio_semana_materia
+            ),
+            "apoyo_familiar_nivel": self.apoyo_familiar_nivel,
+            "acceso_internet": int(self.acceso_internet),
+            "trabaja": int(self.trabaja),
+            "horas_trabajo_semana": self.horas_trabajo_semana,
+        }
+
     def calcular_riesgo(self):
         """
         Determina el riesgo utilizando el rango completo
@@ -176,35 +216,22 @@ class PrediccionMateria(models.Model):
         return 'MEDIO'
 
 
-    def calcular_estimacion_provisional(self):
-        """
-        Fórmula temporal utilizada mientras se conecta
-        el modelo real de Machine Learning.
-        """
-
-        estimacion = (
-            self.parcial_1 * 0.30
-            + self.parcial_2 * 0.40
-            + self.promedio_tareas * 0.10
-            + self.participacion * 0.05
-            + self.conducta * 0.05
-            + (self.asistencia_porcentaje / 10) * 0.10
-        )
-
-        return round(max(0, min(10, estimacion)), 2)
-
-
     def calcular_rango_tercer_parcial(self):
         """
         Calcula los escenarios mínimo, medio y máximo
-        del tercer parcial.
+        usando el margen almacenado en el artefacto de ML.
         """
 
         if self.calificacion_media_tercer_parcial is None:
             return None, None, None
 
         media = self.calificacion_media_tercer_parcial
-        margen = self.MARGEN_ERROR_MODELO
+
+        margen = (
+            self.margen_error_modelo
+            if self.margen_error_modelo is not None
+            else self.MARGEN_ERROR_MODELO
+        )
 
         minima = max(0, media - margen)
         maxima = min(10, media + margen)
@@ -255,29 +282,37 @@ class PrediccionMateria(models.Model):
 
 
     def save(self, *args, **kwargs):
-        # Temporalmente se usa esta fórmula.
-        # Después será sustituida por la predicción del modelo de ML.
-        if self.calificacion_media_tercer_parcial is None:
-            self.calificacion_media_tercer_parcial = (
-                self.calcular_estimacion_provisional()
-            )
+        """
+        Calcula los resultados derivados cuando existe
+        una predicción central generada por el modelo.
+        """
 
-        (
-            self.calificacion_minima_tercer_parcial,
-            self.calificacion_media_tercer_parcial,
-            self.calificacion_maxima_tercer_parcial
-        ) = self.calcular_rango_tercer_parcial()
+        if self.calificacion_media_tercer_parcial is not None:
+            (
+                self.calificacion_minima_tercer_parcial,
+                self.calificacion_media_tercer_parcial,
+                self.calificacion_maxima_tercer_parcial
+            ) = self.calcular_rango_tercer_parcial()
 
-        (
-            self.calificacion_final_minima,
-            self.calificacion_final_media,
-            self.calificacion_final_maxima
-        ) = self.calcular_rango_calificacion_final()
+            (
+                self.calificacion_final_minima,
+                self.calificacion_final_media,
+                self.calificacion_final_maxima
+            ) = self.calcular_rango_calificacion_final()
 
-        self.riesgo_academico = self.calcular_riesgo()
+            self.riesgo_academico = self.calcular_riesgo()
+
+        else:
+            self.calificacion_minima_tercer_parcial = None
+            self.calificacion_maxima_tercer_parcial = None
+
+            self.calificacion_final_minima = None
+            self.calificacion_final_media = None
+            self.calificacion_final_maxima = None
+
+            self.riesgo_academico = None
 
         super().save(*args, **kwargs)
-
 
     def __str__(self):
         return (
